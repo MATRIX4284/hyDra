@@ -1,0 +1,96 @@
+FROM ubuntu:18.04
+
+LABEL maintainer="Kaustav Mukherjee <kaustav.mukherjee@optum.com>"
+
+USER root
+
+# Install some basic utilities
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    sudo \
+    git \
+    wget \
+    bzip2 \
+    libx11-6 \
+ && rm -rf /var/lib/apt/lists/*
+
+# Create a working directory
+
+#RUN mkdir /data
+
+WORKDIR /data
+
+CMD echo python3 --version
+
+# All users can use /home/user as their home directory
+ENV HOME=/data
+#RUN chmod 777 /data
+
+WORKDIR /data
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        g++ \
+        make \
+        automake \
+        autoconf \
+        bzip2 \
+        unzip \
+        wget \
+        sox \
+        libtool \
+        git \
+        subversion \
+        python2.7 \
+        python3 \
+        zlib1g-dev \
+        gfortran \
+        ca-certificates \
+        patch \
+        ffmpeg \
+	vim && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN apt-get update && apt-get install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev wget libbz2-dev
+
+
+RUN apt-get -y install build-essential libssl-dev libffi-dev python-dev python-pip libsasl2-dev libldap2-dev python3-pip python3-dev
+
+RUN wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz
+
+RUN tar -xf Python-3.7.4.tgz
+
+
+RUN apt-get install liblzma-dev
+RUN apt-get install lzma
+
+RUN apt-get update && apt-get install -y libsndfile1
+
+RUN apt install -y bzip2
+
+RUN apt install -y unzip
+
+RUN apt-get install -y libreadline-gplv2-dev libncursesw5-dev libssl-dev
+
+RUN apt-get install -y libsqlite3-dev
+
+RUN apt-get install -y libgdbm-dev libc6-dev libbz2-dev
+
+ARG DEBIAN_FRONTEND=noninteractive 
+
+RUN apt-get install -y tk-dev 
+
+
+RUN cd Python-3.7.4 && ./configure --enable-optimizations && make -j 16 && make altinstall
+
+RUN pip3 install -U pip
+
+
+RUN pip3 install soundfile
+
+
+RUN apt-get install -y net-tools
+
+CMD ["tail", "-f", "/dev/null"]
