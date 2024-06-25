@@ -1,0 +1,17 @@
+FROM audioanalyticsacr.azurecr.io/dl_container/ubuntu1804_py37_cpu_base:latest
+
+LABEL maintainer="Kaustav Mukherjee <kaustav.mukherjee@optum.com>"
+
+git clone gitHub.optum.com/hyDra
+
+RUN pip3.7 install -U pip
+
+RUN pip3.7 install cachetools
+
+RUN pip3.7 install -r requirements.txt
+
+RUN pip3.7 install pyannote.audio==1.1
+
+WORKDIR /data/hyDra
+
+ENTRYPOINT ["/data/hyDra/run_hydra.sh", "-D", "BACKGROUND"]
