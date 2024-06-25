@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hydra
+  #namespace: atctenant
+spec:
+  selector:
+    matchLabels:
+      app: hydra
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hydra
+    spec:
+      securityContext: 
+        #fsGroup: 65534
+        #runAsUser: 842999
+      containers:
+      - name: hydra
+        image: audioanalyticsacr.azurecr.io/application/diarization/hydra:latest
+        imagePullPolicy: Always 
+        env:
+        - name: PASSWORD
+          value: "provide your password"
+        resources:
+          limits:
+            memory: 80Gi
+            cpu: 12000m
+            #nvidia.com/gpu: 1
+          requests:
+            memory: 30Gi
+            cpu: 5000m 
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        imagePullPolicy: Always
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      imagePullSecrets:
+      - name: secret
+      nodeSelector:
+        hardware: XXXX
