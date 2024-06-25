@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hydra
+  #namespace: atctenant
+spec:
+  selector:
+    matchLabels:
+      app: hydra
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hydra
+    spec:
+      securityContext: 
+        #fsGroup: 65534
+        runAsUser: 842999
+      containers:
+      - name: hydra
+        image: audioanalyticsacr.azurecr.io/dl_conatiner/deep-learning-gpu-kaldi-container
+        imagePullPolicy: Always 
+        env:
+        - name: PASSWORD
+          value: "provide your password"
+        resources:
+          limits:
+            memory: 30Gi
+            cpu: 5000m
+            nvidia.com/gpu: 1
+          requests:
+            memory: 30Gi
+            cpu: 5000m 
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - mountPath: /data/apps/diarization
+          name: mapr_dia
+        - mountPath: /dev/shm
+          name: dshm
+        imagePullPolicy: Always
+      volumes:
+      - name: mapr_dia
+        persistentVolumeClaim:
+          claimName: claim_name
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      imagePullSecrets:
+      - name: secret-name
+      nodeSelector:
+        hardware: K80_1
